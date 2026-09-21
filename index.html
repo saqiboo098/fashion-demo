@@ -32,15 +32,15 @@
 
   /* header */
   .header { background: var(--bg); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 30; }
-  .header .wrap { display: flex; align-items: center; gap: 14px; height: 64px; }
-  .logo { font-family: var(--serif); font-weight: 600; font-size: 1.7rem; text-decoration: none; letter-spacing: -0.01em; margin-right: auto; }
+  .header .wrap { display: flex; align-items: center; gap: 8px; min-height: 60px; }
+  .logo { font-family: var(--serif); font-weight: 600; font-size: 1.4rem; white-space: nowrap; text-decoration: none; letter-spacing: -0.01em; margin-right: auto; }
   .menu-btn { background: none; border: 0; padding: 6px; cursor: pointer; display: block; }
   .nav { display: none; }
   .nav a { text-decoration: none; padding: 6px 2px; }
   .nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
   .icons { display: flex; align-items: center; gap: 4px; }
-  .ic { position: relative; background: none; border: 0; padding: 8px; cursor: pointer; display: inline-flex; text-decoration: none; }
-  .ic svg { width: 23px; height: 23px; }
+  .ic { position: relative; background: none; border: 0; padding: 6px; cursor: pointer; display: inline-flex; text-decoration: none; }
+  .ic svg { width: 22px; height: 22px; }
   .badge { position: absolute; top: 1px; right: 0; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--ink); color: #fff; font-size: 0.72rem; font-weight: 600; display: none; align-items: center; justify-content: center; }
   .badge.show { display: flex; }
   .mobile-nav { display: none; border-top: 1px solid var(--line); background: var(--bg); }
@@ -228,7 +228,9 @@
   @media (min-width: 900px) {
     .menu-btn { display: none; }
     .nav { display: flex; gap: 28px; margin-right: auto; margin-left: 36px; }
-    .logo { margin-right: 0; }
+    .logo { margin-right: 0; font-size: 1.7rem; }
+    .ic { padding: 8px; }
+    .header .wrap { gap: 14px; }
     .mobile-nav { display: none !important; }
     .hero { grid-template-columns: 1fr 1.1fr; padding-top: 56px; gap: 48px; }
     .hero-art { aspect-ratio: 1 / 1; }
