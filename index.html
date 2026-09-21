@@ -776,5 +776,50 @@
   route(false);
 })();
 </script>
+
+<!-- Chat assistant (Flowise embed) -->
+<script type="module">
+  import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js";
+  Chatbot.init({
+    chatflowid: "d83a301b-6b67-43f0-8fed-e35ecc00f607",
+    apiHost: "https://cloud.flowiseai.com",
+    theme: {
+      button: {
+        backgroundColor: "#1b1b1b",
+        right: 20,
+        bottom: 20,
+        size: 56,
+        iconColor: "white"
+      },
+      tooltip: {
+        showTooltip: true,
+        tooltipMessage: "Need help? Ask our assistant",
+        tooltipBackgroundColor: "#1b1b1b",
+        tooltipTextColor: "white",
+        tooltipFontSize: 15
+      },
+      chatWindow: {
+        showTitle: true,
+        title: "Shop assistant",
+        welcomeMessage: "Hi! I can help you track an order, change your delivery address, or answer questions about products and policies.",
+        backgroundColor: "#ffffff",
+        fontSize: 16,
+        starterPrompts: [
+          "Track my order",
+          "Change my delivery address",
+          "What is your return policy?",
+          "I want to talk to a person"
+        ],
+        botMessage: { backgroundColor: "#f3f1ed", textColor: "#1b1b1b" },
+        userMessage: { backgroundColor: "#1b1b1b", textColor: "#ffffff" },
+        textInput: {
+          placeholder: "Type your question",
+          sendButtonColor: "#1b1b1b"
+        }
+      }
+    }
+  });
+</script>
+
 </body>
 </html>
