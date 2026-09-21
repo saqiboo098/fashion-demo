@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Noor &amp; Thread | Demo Fashion Store</title>
+<meta name="description" content="Demo fashion store: new arrivals, collections, pre-loved pieces sorted by size, and Cash on Delivery.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf8;
+    --ink: #1b1b1b;
+    --muted: #6a6a66;
+    --line: #e6e2dc;
+    --sale: #a33b2e;
+    --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --sans: "Jost", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 1rem; line-height: 1.55; }
+  a { color: inherit; }
+  button, input, select, textarea { font-family: inherit; font-size: 1rem; color: inherit; }
+  img, svg { max-width: 100%; }
+  :focus-visible { outline: 3px solid #2b59ff; outline-offset: 2px; }
+  .wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.01em; line-height: 1.1; margin: 0; }
+
+  .announce { background: var(--ink); color: #fff; text-align: center; font-size: 0.88rem; padding: 9px 16px; }
+
+  /* header */
+  .header { background: var(--bg); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 30; }
+  .header .wrap { display: flex; align-items: center; gap: 14px; height: 64px; }
+  .logo { font-family: var(--serif); font-weight: 600; font-size: 1.7rem; text-decoration: none; letter-spacing: -0.01em; margin-right: auto; }
+  .menu-btn { background: none; border: 0; padding: 6px; cursor: pointer; display: block; }
+  .nav { display: none; }
+  .nav a { text-decoration: none; padding: 6px 2px; }
+  .nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
+  .icons { display: flex; align-items: center; gap: 4px; }
+  .ic { position: relative; background: none; border: 0; padding: 8px; cursor: pointer; display: inline-flex; text-decoration: none; }
+  .ic svg { width: 23px; height: 23px; }
+  .badge { position: absolute; top: 1px; right: 0; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--ink); color: #fff; font-size: 0.72rem; font-weight: 600; display: none; align-items: center; justify-content: center; }
+  .badge.show { display: flex; }
+  .mobile-nav { display: none; border-top: 1px solid var(--line); background: var(--bg); }
+  .mobile-nav.open { display: block; }
+  .mobile-nav a { display: block; padding: 14px 20px; text-decoration: none; border-bottom: 1px solid var(--line); font-size: 1.05rem; }
+  .searchbar { display: none; border-top: 1px solid var(--line); background: var(--bg); }
+  .searchbar.open { display: block; }
+  .searchbar form { display: flex; gap: 10px; padding: 12px 0; }
+  .searchbar input { flex: 1; padding: 11px 12px; border: 1px solid var(--ink); background: #fff; }
+
+  /* buttons */
+  .btn { display: inline-block; background: var(--ink); color: #fff; border: 1px solid var(--ink); padding: 13px 26px; text-decoration: none; cursor: pointer; font-weight: 500; text-align: center; }
+  .btn:hover { background: #fff; color: var(--ink); }
+  .btn-line { background: transparent; color: var(--ink); }
+  .btn-line:hover { background: var(--ink); color: #fff; }
+  .btn[disabled] { opacity: .45; cursor: not-allowed; }
+  .btn-block { display: block; width: 100%; }
+
+  /* product art */
+  .tile { position: relative; aspect-ratio: 4 / 5; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .tile svg.g { width: 68%; height: auto; }
+  .tag { position: absolute; top: 10px; left: 10px; background: #fff; color: var(--ink); font-size: 0.8rem; padding: 3px 9px; }
+  .tag.so { background: var(--ink); color: #fff; }
+  .tag.sale { color: var(--sale); }
+
+  /* cards and grids */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px 12px; }
+  .card { position: relative; }
+  .card a { text-decoration: none; }
+  .card h3 { font-family: var(--sans); font-weight: 500; font-size: 1rem; letter-spacing: 0; margin: 10px 0 2px; }
+  .card .meta { margin: 0; color: var(--muted); font-size: 0.9rem; }
+  .pr { margin: 2px 0 0; }
+  .pr s { color: var(--muted); margin-left: 6px; }
+  .pr .now { color: var(--sale); }
+  .heart { position: absolute; top: 6px; right: 6px; background: rgba(255,255,255,.85); border: 0; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .heart svg { width: 19px; height: 19px; fill: none; stroke: var(--ink); stroke-width: 1.8; }
+  .heart.on svg { fill: var(--sale); stroke: var(--sale); }
+
+  /* sections */
+  .section { padding: 56px 0 0; }
+  .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 22px; }
+  .section-head h2 { font-size: 2rem; }
+  .section-head a { color: var(--muted); }
+
+  /* hero */
+  .hero { display: grid; gap: 28px; padding: 34px 0 0; align-items: center; }
+  .hero h1 { font-size: clamp(2.5rem, 9vw, 4.4rem); line-height: 1.02; margin-bottom: 14px; }
+  .hero p { margin: 0 0 24px; color: var(--muted); max-width: 42ch; font-size: 1.08rem; }
+  .hero .cta { display: flex; flex-wrap: wrap; gap: 10px; }
+  .hero-art { position: relative; background: #e8dfd3; aspect-ratio: 5 / 4; display: flex; align-items: flex-end; justify-content: center; gap: 4%; overflow: hidden; }
+  .hero-art svg { height: 88%; width: auto; aspect-ratio: 200 / 240; flex: none; }
+
+  /* category tiles */
+  .cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .cat { text-decoration: none; }
+  .cat .tile { aspect-ratio: 1 / 1; }
+  .cat .tile svg.g { width: 52%; }
+  .cat span { display: block; margin-top: 8px; font-size: 1.02rem; }
+
+  /* pre-loved feature */
+  .feature { background: #dfe6dc; padding: 36px 22px; display: grid; gap: 18px; }
+  .feature h2 { font-size: 2rem; }
+  .feature p { margin: 0; max-width: 46ch; color: #3e4a3c; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { text-decoration: none; border: 1px solid var(--ink); padding: 8px 18px; min-width: 52px; text-align: center; background: transparent; cursor: pointer; }
+  .pill:hover, .pill.on { background: var(--ink); color: #fff; }
+
+  .promo { background: var(--ink); color: #fff; padding: 40px 22px; text-align: center; margin-top: 56px; }
+  .promo h2 { font-size: 2rem; margin-bottom: 8px; }
+  .promo p { margin: 0 0 20px; color: #d7d4ce; }
+  .promo .btn { background: #fff; color: var(--ink); border-color: #fff; }
+  .promo .btn:hover { background: transparent; color: #fff; }
+
+  .insta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .insta .tile { aspect-ratio: 1 / 1; }
+  .insta .tile svg.g { width: 56%; }
+
+  .newsletter { text-align: center; padding: 64px 0 8px; }
+  .newsletter h2 { font-size: 2rem; margin-bottom: 8px; }
+  .newsletter p { margin: 0 auto 18px; color: var(--muted); max-width: 44ch; }
+  .newsletter form { display: flex; gap: 8px; max-width: 460px; margin: 0 auto; }
+  .newsletter input { flex: 1; min-width: 0; padding: 12px; border: 1px solid var(--ink); background: #fff; }
+  .note { color: var(--muted); font-size: 0.92rem; margin: 10px 0 0; }
+  .note.ok { color: #2f6b3a; }
+  .note.err { color: var(--sale); }
+
+  /* footer */
+  .footer { margin-top: 64px; border-top: 1px solid var(--line); padding: 40px 0 40px; }
+  .footer .cols { display: grid; gap: 26px; }
+  .footer h4 { margin: 0 0 10px; font-weight: 600; }
+  .footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .footer a { text-decoration: none; color: var(--muted); }
+  .footer a:hover { text-decoration: underline; }
+  .footer .small { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  .footer .small p { margin: 0 0 4px; }
+
+  /* collection page */
+  .page-head { padding: 34px 0 6px; }
+  .page-head h1 { font-size: clamp(2.2rem, 7vw, 3.2rem); margin-bottom: 8px; }
+  .page-head p { margin: 0; color: var(--muted); max-width: 56ch; }
+  .crumbs { color: var(--muted); font-size: 0.9rem; margin-top: 22px; }
+  .crumbs a { text-decoration: none; }
+  .crumbs a:hover { text-decoration: underline; }
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 22px 0 0; }
+  .toolbar input[type=search] { flex: 1 1 180px; padding: 10px 12px; border: 1px solid var(--line); background: #fff; }
+  .toolbar select { padding: 10px 12px; border: 1px solid var(--line); background: #fff; }
+  .count { color: var(--muted); font-size: 0.92rem; }
+  .layout { display: grid; gap: 0; }
+  details.filters { border: 1px solid var(--line); background: #fff; margin: 14px 0 22px; }
+  details.filters summary { padding: 12px 14px; cursor: pointer; font-weight: 500; }
+  .fbody { padding: 4px 14px 16px; display: grid; gap: 16px; }
+  .fbody label.t { display: block; font-weight: 500; margin-bottom: 6px; }
+  .fbody select { width: 100%; padding: 9px 10px; border: 1px solid var(--line); background: #fff; }
+  .fbody input[type=range] { width: 100%; accent-color: var(--ink); }
+  .check { display: flex; align-items: center; gap: 8px; }
+  .check input { width: 18px; height: 18px; accent-color: var(--ink); }
+  .link-btn { background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 0; color: var(--muted); text-align: left; }
+  .empty { padding: 56px 0; text-align: center; color: var(--muted); }
+  .empty .btn { margin-top: 16px; }
+
+  /* product page */
+  .pdp { display: grid; gap: 28px; padding-top: 12px; }
+  .gallery .main { position: relative; }
+  .gallery .main svg.g { transition: transform .25s; }
+  .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .thumbs button { border: 1px solid transparent; padding: 0; cursor: pointer; background: none; }
+  .thumbs button.on { border-color: var(--ink); }
+  .thumbs .tile { aspect-ratio: 1 / 1; }
+  .info h1 { font-size: clamp(2rem, 6vw, 2.8rem); margin-bottom: 6px; }
+  .info .brand { color: var(--muted); margin: 0 0 10px; }
+  .info .big { font-size: 1.4rem; margin: 0 0 14px; }
+  .info .big .now { color: var(--sale); }
+  .info .big s { color: var(--muted); font-size: 1.1rem; margin-left: 8px; }
+  .sizes { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 6px; }
+  .size { min-width: 52px; padding: 10px 14px; border: 1px solid var(--ink); background: transparent; cursor: pointer; }
+  .size.on { background: var(--ink); color: #fff; }
+  .size[disabled] { color: #a5a29c; border-color: var(--line); text-decoration: line-through; cursor: not-allowed; }
+  .stock { color: var(--muted); font-size: 0.95rem; margin: 6px 0 16px; }
+  .stock.low { color: var(--sale); }
+  .acc { margin-top: 26px; border-top: 1px solid var(--line); }
+  .acc details { border-bottom: 1px solid var(--line); padding: 14px 0; }
+  .acc summary { cursor: pointer; font-weight: 500; }
+  .acc p, .acc ul { margin: 10px 0 0; color: var(--muted); }
+  .acc ul { padding-left: 18px; }
+
+  /* cart and checkout */
+  .cart-wrap { display: grid; gap: 28px; padding-top: 10px; }
+  .line { display: grid; grid-template-columns: 84px 1fr; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .line .tile { aspect-ratio: 1 / 1; }
+  .line .tile svg.g { width: 70%; }
+  .line h3 { font-family: var(--sans); font-weight: 500; font-size: 1.02rem; letter-spacing: 0; margin: 0 0 2px; }
+  .line p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+  .line .row { display: flex; align-items: center; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
+  .qty { display: inline-flex; border: 1px solid var(--ink); align-items: center; }
+  .qty button { background: none; border: 0; width: 34px; height: 34px; cursor: pointer; font-size: 1.15rem; }
+  .qty span { min-width: 30px; text-align: center; }
+  .summary { background: #fff; border: 1px solid var(--line); padding: 20px; align-self: start; }
+  .summary h2 { font-size: 1.6rem; margin-bottom: 14px; }
+  .sum-row { display: flex; justify-content: space-between; padding: 6px 0; }
+  .sum-row.total { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 12px; font-weight: 600; font-size: 1.1rem; }
+  .code { display: flex; gap: 8px; margin: 14px 0 4px; }
+  .code input { flex: 1; min-width: 0; padding: 10px; border: 1px solid var(--line); }
+  .form { display: grid; gap: 14px; }
+  .form label { display: block; font-weight: 500; margin-bottom: 4px; }
+  .form input, .form textarea, .form select { width: 100%; padding: 11px 12px; border: 1px solid var(--line); background: #fff; }
+  .radio { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); background: #fff; padding: 14px; }
+  .radio input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--ink); }
+  .radio.off { color: #8b8880; background: #f4f2ee; }
+  .done { text-align: center; padding: 56px 0; max-width: 560px; margin: 0 auto; }
+  .done h1 { font-size: 2.6rem; margin-bottom: 10px; }
+  .done p { color: var(--muted); }
+
+  .prose { max-width: 720px; padding-bottom: 8px; }
+  .prose h2 { font-size: 1.7rem; margin: 30px 0 8px; }
+  .prose p { color: #3c3c39; margin: 0 0 12px; }
+  .faq details { border-bottom: 1px solid var(--line); padding: 16px 0; }
+  .faq { border-top: 1px solid var(--line); margin-top: 20px; }
+  .faq summary { cursor: pointer; font-weight: 500; }
+  .faq p { margin: 10px 0 0; color: var(--muted); }
+
+  .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 12px 18px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 60; display: flex; gap: 16px; align-items: center; max-width: calc(100% - 32px); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  .toast a { color: #fff; font-weight: 600; }
+
+  @media (min-width: 900px) {
+    .menu-btn { display: none; }
+    .nav { display: flex; gap: 28px; margin-right: auto; margin-left: 36px; }
+    .logo { margin-right: 0; }
+    .mobile-nav { display: none !important; }
+    .hero { grid-template-columns: 1fr 1.1fr; padding-top: 56px; gap: 48px; }
+    .hero-art { aspect-ratio: 1 / 1; }
+    .grid { grid-template-columns: repeat(4, 1fr); gap: 34px 18px; }
+    .cats { grid-template-columns: repeat(6, 1fr); }
+    .feature { grid-template-columns: 1.1fr 1fr; align-items: center; padding: 56px; }
+    .insta { grid-template-columns: repeat(6, 1fr); }
+    .footer .cols { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
+    .layout { grid-template-columns: 250px 1fr; gap: 36px; align-items: start; }
+    details.filters { margin: 0; position: sticky; top: 84px; }
+    .pdp { grid-template-columns: 1.1fr 1fr; gap: 56px; }
+    .cart-wrap { grid-template-columns: 1.5fr 1fr; gap: 48px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .gallery .main svg.g, .toast { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- garment artwork used as placeholder product photos -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="g-kurta" viewBox="0 0 200 240">
+    <path fill="currentColor" d="M72 16 L100 34 L128 16 L170 42 L152 84 L140 72 L142 224 L58 224 L60 72 L48 84 L30 42 Z"/>
+    <path d="M100 34 V150 M72 16 L100 34 L128 16 M68 176 V224 M132 176 V224" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none"/>
+  </symbol>
+  <symbol id="g-dress" viewBox="0 0 200 240">
+    <path fill="currentColor" d="M76 14 L100 28 L124 14 L132 62 L152 104 L172 226 L28 226 L48 104 L68 62 Z"/>
+    <path d="M56 100 H144 M76 14 L100 28 L124 14" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none"/>
+  </symbol>
+  <symbol id="g-top" viewBox="0 0 200 240">
+    <path fill="currentColor" d="M66 22 L100 38 L134 22 L178 54 L158 96 L142 84 L142 176 L58 176 L58 84 L42 96 L22 54 Z"/>
+    <path d="M100 38 V176 M66 22 L100 38 L134 22" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none"/>
+  </symbol>
+  <symbol id="g-trousers" viewBox="0 0 200 240">
+    <path fill="currentColor" d="M60 18 H140 L148 226 H108 L100 92 L92 226 H52 Z"/>
+    <path d="M58 34 H142" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none"/>
+  </symbol>
+  <symbol id="g-shawl" viewBox="0 0 200 240">
+    <path fill="currentColor" d="M28 44 Q100 12 172 44 L166 204 Q100 230 34 204 Z"/>
+    <path d="M60 40 Q64 130 58 210 M100 32 Q104 130 100 222 M140 40 Q136 130 142 210" stroke="#fff" stroke-opacity=".5" stroke-width="2" fill="none"/>
+    <path d="M44 212 v16 M64 218 v16 M84 222 v16 M104 224 v16 M124 222 v16 M144 218 v16 M160 212 v16" stroke="currentColor" stroke-width="3" fill="none"/>
+  </symbol>
+  <symbol id="g-bag" viewBox="0 0 200 240">
+    <path fill="currentColor" d="M46 92 H154 L166 214 H34 Z"/>
+    <path d="M76 92 V70 Q100 38 124 70 V92" stroke="currentColor" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M46 122 H154" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none"/>
+  </symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></g></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c.8-4 4-5.8 7.5-5.8s6.7 1.8 7.5 5.8"/></g></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5S4 15.4 4 9.6A4.3 4.3 0 0 1 12 7.4a4.3 4.3 0 0 1 8 2.2c0 5.800-8 10.900-8 10.900z" stroke-linejoin="round"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.200a2 2 0 0 1-2 1.800H8.200a2 2 0 0 1-2-1.800L5 8z"/><path d="M9 8V6.500a3 3 0 0 1 6 0V8"/></g></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></g></symbol>
+</svg>
+
+<div class="announce">Free shipping over Rs 8,000. Cash on Delivery across Pakistan.</div>
+
+<header class="header">
+  <div class="wrap">
+    <button class="menu-btn" data-act="menu" aria-label="Open menu"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-menu"/></svg></button>
+    <a class="logo" href="#/">Noor &amp; Thread</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#/shop">Shop</a>
+      <a href="#/collections">Collections</a>
+      <a href="#/preloved">Pre-Loved</a>
+      <a href="#/about">About</a>
+    </nav>
+    <div class="icons">
+      <button class="ic" data-act="search" aria-label="Search"><svg aria-hidden="true"><use href="#i-search"/></svg></button>
+      <a class="ic" href="#/account" aria-label="Account"><svg aria-hidden="true"><use href="#i-user"/></svg></a>
+      <a class="ic" href="#/wishlist" aria-label="Wishlist"><svg aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.8"><use href="#i-heart"/></svg><span class="badge" id="wl-count">0</span></a>
+      <a class="ic" href="#/cart" aria-label="Cart"><svg aria-hidden="true"><use href="#i-bag"/></svg><span class="badge" id="cart-count">0</span></a>
+    </div>
+  </div>
+  <div class="searchbar" id="searchbar">
+    <div class="wrap">
+      <form id="search-form"><input id="search-input" type="search" placeholder="Search products" aria-label="Search products"><button class="btn" type="submit">Search</button></form>
+    </div>
+  </div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile">
+    <a href="#/shop">Shop</a>
+    <a href="#/new">New Arrivals</a>
+    <a href="#/collections">Collections</a>
+    <a href="#/preloved">Pre-Loved</a>
+    <a href="#/about">About</a>
+    <a href="#/contact">Contact</a>
+  </nav>
+</header>
+
+<main id="app"></main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>Noor &amp; Thread</h4>
+        <p style="margin:0;color:var(--muted);max-width:32ch">Considered pieces for everyday wear, with pre-loved finds sorted by size.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#/new">New Arrivals</a></li>
+          <li><a href="#/shop">All products</a></li>
+          <li><a href="#/collections">Collections</a></li>
+          <li><a href="#/preloved">Pre-Loved</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <ul>
+          <li><a href="#/policies">Shipping and returns</a></li>
+          <li><a href="#/faq">FAQ</a></li>
+          <li><a href="#/contact">Contact</a></li>
+          <li><a href="#/policies">Privacy and terms</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="#/" data-act="noop">Instagram</a></li>
+          <li><a href="#/" data-act="noop">Facebook</a></li>
+          <li><a href="#/" data-act="noop">TikTok</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="small">
+      <p>&copy; 2026 Noor &amp; Thread. Payment: Cash on Delivery.</p>
+      <p>Demo store with sample products and text. Nothing here is a real order or a real brand.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-msg"></span><a href="#/cart">View cart</a></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- data ---------- */
+  var TONES = {
+    sand:  ["#e8dfd3", "#a88f6e"],
+    blush: ["#ecd9d3", "#c98f84"],
+    sage:  ["#d6ddd0", "#7f9578"],
+    stone: ["#dadfe2", "#7d8b96"],
+    clay:  ["#dfc7b3", "#a8704a"],
+    mist:  ["#dbe3ec", "#6d86a6"]
+  };
+  var CATS = ["Kurtas", "Dresses", "Tops", "Bottoms", "Shawls", "Bags"];
+  var CAT_ART = { Kurtas: "kurta", Dresses: "dress", Tops: "top", Bottoms: "trousers", Shawls: "shawl", Bags: "bag" };
+  var SIZES = ["XS", "S", "M", "L", "XL"];
+  var FREE_SHIP = 8000, SHIP_FEE = 250;
+
+  var P = [
+    { id: 1,  name: "Linen Kurta",             cat: "Kurtas",  brand: "Noor & Thread", price: 6500,  art: "kurta",    tone: "sand",  isNew: true,  sizes: { S: 3, M: 5, L: 2, XL: 0 }, desc: "A relaxed kurta cut from breathable linen with side slits and a clean neckline." },
+    { id: 2,  name: "Embroidered Lawn Kurta",  cat: "Kurtas",  brand: "Noor & Thread", price: 7800,  sale: 6240, art: "kurta", tone: "blush", isNew: true, sizes: { S: 2, M: 4, L: 3, XL: 1 }, desc: "Light lawn with tonal embroidery at the neckline and cuffs." },
+    { id: 3,  name: "Chiffon Maxi Dress",      cat: "Dresses", brand: "Noor & Thread", price: 12500, art: "dress",    tone: "mist",  isNew: true,  sizes: { XS: 1, S: 2, M: 2, L: 1 }, desc: "A floor-length dress in soft chiffon with a fitted waist and flowing skirt." },
+    { id: 4,  name: "Floral Wrap Dress",       cat: "Dresses", brand: "Ayla Label",    price: 9200,  art: "dress",    tone: "sage",  isNew: false, sizes: { S: 4, M: 3, L: 0 }, desc: "A wrap dress with an adjustable waist tie and a gentle floral print." },
+    { id: 5,  name: "Silk Blouse",             cat: "Tops",    brand: "Noor & Thread", price: 5400,  art: "top",      tone: "clay",  isNew: true,  sizes: { XS: 2, S: 3, M: 3, L: 2 }, desc: "A fluid blouse with a concealed placket that pairs with trousers or a skirt." },
+    { id: 6,  name: "Cotton Shirt",            cat: "Tops",    brand: "Ayla Label",    price: 4200,  sale: 3360, art: "top", tone: "stone", isNew: false, sizes: { S: 5, M: 6, L: 4, XL: 2 }, desc: "A crisp everyday shirt in soft cotton poplin." },
+    { id: 7,  name: "Straight Trousers",       cat: "Bottoms", brand: "Noor & Thread", price: 4800,  art: "trousers", tone: "sand",  isNew: false, sizes: { S: 3, M: 4, L: 3, XL: 2 }, desc: "High-waisted straight trousers with a clean drape." },
+    { id: 8,  name: "Wide-Leg Palazzo",        cat: "Bottoms", brand: "Bano Couture",  price: 4500,  art: "trousers", tone: "blush", isNew: false, sizes: { S: 0, M: 0, L: 0 }, desc: "A wide-leg palazzo with an elastic back waist for all-day comfort." },
+    { id: 9,  name: "Pashmina Shawl",          cat: "Shawls",  brand: "Noor & Thread", price: 8900,  art: "shawl",    tone: "mist",  isNew: true,  sizes: { "One size": 6 }, desc: "A warm, lightweight shawl with hand-finished fringe." },
+    { id: 10, name: "Printed Dupatta",         cat: "Shawls",  brand: "Bano Couture",  price: 3200,  art: "shawl",    tone: "clay",  isNew: false, sizes: { "One size": 9 }, desc: "A printed dupatta in soft voile, finished with a rolled hem." },
+    { id: 11, name: "Leather Tote",            cat: "Bags",    brand: "Ayla Label",    price: 11000, art: "bag",      tone: "sage",  isNew: true,  sizes: { "One size": 4 }, desc: "A structured tote with an inner zip pocket and room for a laptop." },
+    { id: 12, name: "Pre-Loved Silk Kurta",    cat: "Kurtas",  brand: "Maria Studio",  price: 3500,  art: "kurta",    tone: "stone", pre: true, cond: "Like new",  sizes: { S: 1 }, desc: "Worn once. Silk kurta with a subtle sheen and no marks." },
+    { id: 13, name: "Pre-Loved Formal Dress",  cat: "Dresses", brand: "Maria Studio",  price: 6000,  art: "dress",    tone: "blush", pre: true, cond: "Excellent", sizes: { M: 1 }, desc: "Formal dress worn to one event. Dry cleaned and ready to wear." },
+    { id: 14, name: "Pre-Loved Embroidered Shirt", cat: "Tops", brand: "Bano Couture", price: 2800,  art: "top",      tone: "sand",  pre: true, cond: "Good",      sizes: { L: 1 }, desc: "Embroidered shirt with light wear at the cuffs, priced accordingly." },
+    { id: 15, name: "Pre-Loved Trousers",      cat: "Bottoms", brand: "Ayla Label",    price: 2000,  art: "trousers", tone: "mist",  pre: true, cond: "Good",      sizes: { S: 0 }, desc: "Tailored trousers in a stretch blend." },
+    { id: 16, name: "Pre-Loved Chiffon Dupatta", cat: "Shawls", brand: "Maria Studio", price: 1800,  art: "shawl",    tone: "sage",  pre: true, cond: "Like new",  sizes: { "One size": 1 }, desc: "A chiffon dupatta worn once, with intact edging." },
+    { id: 17, name: "Pre-Loved Blouse",        cat: "Tops",    brand: "Maria Studio",  price: 2400,  art: "top",      tone: "clay",  pre: true, cond: "Excellent", sizes: { XS: 1 }, desc: "A lightweight blouse with a soft collar and no visible wear." },
+    { id: 18, name: "Pre-Loved Maxi Dress",    cat: "Dresses", brand: "Bano Couture",  price: 5200,  art: "dress",    tone: "sage",  pre: true, cond: "Good",      sizes: { XL: 1 }, desc: "A relaxed maxi dress with pockets." }
+  ];
+  var BRANDS = []; P.forEach(function (p) { if (BRANDS.indexOf(p.brand) < 0) BRANDS.push(p.brand); });
+  var MAXP = 12500;
+
+  /* ---------- state ---------- */
+  var cart = [];            // {id, size, qty}
+  var wish = {};            // id -> true
+  var disc = { code: "", rate: 0 };
+  var F = fresh();          // filters
+  var SEL = { id: 0, size: "", view: 0 };
+  var FOPEN = window.innerWidth >= 900;
+  var lastKey = "";
+  var orderNo = 1000;
+
+  function fresh() { return { q: "", size: "", cat: "", brand: "", max: MAXP, stock: false, sort: "featured" }; }
+
+  /* ---------- helpers ---------- */
+  var app = document.getElementById("app");
+  function money(n) { return "Rs " + Math.round(n).toLocaleString("en-US"); }
+  function cur(p) { return p.sale || p.price; }
+  function stockOf(p) { var t = 0; for (var k in p.sizes) t += p.sizes[k]; return t; }
+  function byId(id) { for (var i = 0; i < P.length; i++) if (P[i].id === +id) return P[i]; return null; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function art(p, extra) {
+    var t = TONES[p.tone];
+    return '<div class="tile" style="background:' + t[0] + '"><svg class="g" viewBox="0 0 200 240" style="color:' + t[1] + ';' + (extra || "") + '" aria-hidden="true"><use href="#g-' + p.art + '"/></svg></div>';
+  }
+  function priceHTML(p) {
+    return p.sale ? '<span class="now">' + money(p.sale) + '</span><s>' + money(p.price) + '</s>' : money(p.price);
+  }
+  function sizeLabel(p) { var ks = Object.keys(p.sizes); return ks.length === 1 ? ks[0] : ""; }
+
+  function card(p) {
+    var so = stockOf(p) === 0;
+    var tag = so ? '<span class="tag so">Sold out</span>' : p.sale ? '<span class="tag sale">Sale</span>' : p.pre ? '<span class="tag">Pre-loved</span>' : p.isNew ? '<span class="tag">New</span>' : "";
+    var meta = p.pre ? "Size " + sizeLabel(p) + ", " + p.cond : p.brand;
+    return '<article class="card">' +
+      '<a href="#/product/' + p.id + '" style="position:relative;display:block">' + art(p) + tag + '</a>' +
+      '<button class="heart' + (wish[p.id] ? " on" : "") + '" data-act="wish" data-id="' + p.id + '" aria-label="Save ' + esc(p.name) + ' to wishlist"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-heart"/></svg></button>' +
+      '<h3><a href="#/product/' + p.id + '">' + esc(p.name) + '</a></h3>' +
+      '<p class="meta">' + esc(meta) + '</p><p class="pr">' + priceHTML(p) + '</p></article>';
+  }
+  function grid(list) { return '<div class="grid">' + list.map(card).join("") + '</div>'; }
+
+  function toast(msg, withLink) {
+    var t = document.getElementById("toast");
+    document.getElementById("toast-msg").textContent = msg;
+    t.querySelector("a").style.display = withLink ? "" : "none";
+    t.classList.add("show");
+    clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove("show"); }, 3200);
+  }
+  function badges() {
+    var n = 0; cart.forEach(function (l) { n += l.qty; });
+    var c = document.getElementById("cart-count"); c.textContent = n; c.classList.toggle("show", n > 0);
+    var w = Object.keys(wish).length;
+    var wc = document.getElementById("wl-count"); wc.textContent = w; wc.classList.toggle("show", w > 0);
+  }
+
+  /* ---------- pricing ---------- */
+  function totals() {
+    var sub = 0; cart.forEach(function (l) { sub += cur(byId(l.id)) * l.qty; });
+    var d = Math.round(sub * disc.rate);
+    var ship = cart.length ? ((sub - d) >= FREE_SHIP ? 0 : SHIP_FEE) : 0;
+    return { sub: sub, d: d, ship: ship, total: sub - d + ship };
+  }
+
+  /* ---------- views ---------- */
+  function vHome() {
+    var news = P.filter(function (p) { return p.isNew && !p.pre; }).slice(0, 8);
+    var cats = CATS.map(function (c) {
+      var first = P.filter(function (p) { return p.cat === c && !p.pre; })[0];
+      return '<a class="cat" href="#/collection/' + c + '">' + art(first) + '<span>' + c + '</span></a>';
+    }).join("");
+    var insta = [["dress", "blush"], ["kurta", "sand"], ["bag", "sage"], ["shawl", "mist"], ["top", "clay"], ["trousers", "stone"]].map(function (a) {
+      var t = TONES[a[1]];
+      return '<div class="tile" style="background:' + t[0] + '"><svg class="g" viewBox="0 0 200 240" style="color:' + t[1] + '" aria-hidden="true"><use href="#g-' + a[0] + '"/></svg></div>';
+    }).join("");
+    var pills = SIZES.map(function (s) { return '<a class="pill" href="#/preloved/' + s + '">' + s + '</a>'; }).join("");
+    return '<div class="wrap">' +
+      '<section class="hero"><div><h1>Considered pieces for everyday wear</h1>' +
+      '<p>New arrivals, pre-loved finds sorted by size, and Cash on Delivery across Pakistan.</p>' +
+      '<div class="cta"><a class="btn" href="#/new">Shop new arrivals</a><a class="btn btn-line" href="#/preloved">Browse pre-loved</a></div></div>' +
+      '<div class="hero-art" aria-hidden="true"><svg viewBox="0 0 200 240" style="color:#a88f6e"><use href="#g-dress"/></svg><svg viewBox="0 0 200 240" style="color:#c98f84;height:70%"><use href="#g-kurta"/></svg></div></section>' +
+      '<section class="section"><div class="section-head"><h2>New arrivals</h2><a href="#/new">View all</a></div>' + grid(news) + '</section>' +
+      '<section class="section"><div class="section-head"><h2>Shop by category</h2></div><div class="cats">' + cats + '</div></section>' +
+      '<section class="section"><div class="feature"><div><h2>Pre-loved, sorted by size</h2><p style="margin-top:10px">Pick your size and see what is available. Each pre-loved piece is checked, cleaned and listed with its condition.</p></div><div class="pills">' + pills + '</div></div></section>' +
+      '</div>' +
+      '<section class="promo"><div class="wrap"><h2>Free shipping over Rs 8,000</h2><p>Use code DEMO10 for 10% off your order.</p><a class="btn" href="#/shop">Shop all</a></div></section>' +
+      '<div class="wrap"><section class="section"><div class="section-head"><h2>On Instagram</h2><a href="#/" data-act="noop">@noorandthread</a></div><div class="insta">' + insta + '</div></section>' +
+      '<section class="newsletter"><h2>Join the list</h2><p>Hear about new arrivals and pre-loved drops first.</p>' +
+      '<form id="news-form"><input type="email" id="news-email" placeholder="Email address" aria-label="Email address" required><button class="btn" type="submit">Subscribe</button></form><p class="note" id="news-note"></p></section></div>';
+  }
+
+  function baseList(kind, arg) {
+    if (kind === "new") return { list: P.filter(function (p) { return p.isNew && !p.pre; }), title: "New arrivals", desc: "The latest pieces from Noor & Thread.", crumb: "New arrivals" };
+    if (kind === "preloved") return { list: P.filter(function (p) { return p.pre; }), title: "Pre-loved", desc: "Pre-loved pieces, each listed with its size and condition. Choose your size to see what is available.", crumb: "Pre-loved" };
+    if (kind === "collection") return { list: P.filter(function (p) { return p.cat === arg && !p.pre; }), title: arg, desc: "Our " + arg.toLowerCase() + " collection.", crumb: arg };
+    if (kind === "search") return { list: P.filter(function (p) { return (p.name + " " + p.cat + " " + p.brand).toLowerCase().indexOf(arg.toLowerCase()) >= 0; }), title: 'Search: "' + arg + '"', desc: "", crumb: "Search" };
+    return { list: P.filter(function (p) { return !p.pre; }), title: "All products", desc: "Everything in the collection. Pre-loved pieces have their own page.", crumb: "All products" };
+  }
+
+  function vCollection(kind, arg) {
+    var b = baseList(kind, arg);
+    var list = b.list.filter(function (p) {
+      if (F.q && (p.name + " " + p.brand).toLowerCase().indexOf(F.q.toLowerCase()) < 0) return false;
+      if (F.size && !(F.size in p.sizes)) return false;
+      if (F.cat && p.cat !== F.cat) return false;
+      if (F.brand && p.brand !== F.brand) return false;
+      if (cur(p) > F.max) return false;
+      if (F.stock && stockOf(p) === 0) return false;
+      return true;
+    });
+    if (F.sort === "low") list.sort(function (a, c) { return cur(a) - cur(c); });
+    if (F.sort === "high") list.sort(function (a, c) { return cur(c) - cur(a); });
+    if (F.sort === "new") list.sort(function (a, c) { return (c.isNew ? 1 : 0) - (a.isNew ? 1 : 0); });
+
+    function opts(arr, sel, all) { return '<option value="">' + all + '</option>' + arr.map(function (x) { return '<option' + (x === sel ? " selected" : "") + '>' + x + '</option>'; }).join(""); }
+    var sizeList = kind === "preloved" ? SIZES.concat(["One size"]) : SIZES.concat(["One size"]);
+    var pills = "";
+    if (kind === "preloved") {
+      pills = '<div class="pills" style="margin-top:18px"><a class="pill' + (!F.size ? " on" : "") + '" href="#/preloved">All sizes</a>' +
+        SIZES.map(function (s) { return '<a class="pill' + (F.size === s ? " on" : "") + '" href="#/preloved/' + s + '">' + s + '</a>'; }).join("") + '</div>';
+    }
+    var filters = '<details class="filters" id="filters"' + (FOPEN ? " open" : "") + '><summary>Filters</summary><div class="fbody">' +
+      '<div><label class="t" for="f-size">Size</label><select id="f-size" data-f="size">' + opts(sizeList, F.size, "All sizes") + '</select></div>' +
+      (kind === "collection" || kind === "preloved" && false ? "" : '<div><label class="t" for="f-cat">Category</label><select id="f-cat" data-f="cat">' + opts(CATS, F.cat, "All categories") + '</select></div>') +
+      '<div><label class="t" for="f-brand">Brand</label><select id="f-brand" data-f="brand">' + opts(BRANDS, F.brand, "All brands") + '</select></div>' +
+      '<div><label class="t" for="f-max">Price up to <span id="f-max-out">' + money(F.max) + '</span></label><input type="range" id="f-max" data-f="max" min="1000" max="' + MAXP + '" step="500" value="' + F.max + '"></div>' +
+      '<label class="check"><input type="checkbox" data-f="stock"' + (F.stock ? " checked" : "") + '> In stock only</label>' +
+      '<button class="link-btn" data-act="clear">Clear all filters</button></div></details>';
+    var toolbar = '<div class="toolbar"><input type="search" id="f-q" data-f="q" value="' + esc(F.q) + '" placeholder="Search in ' + esc(b.title.toLowerCase()) + '" aria-label="Search in this collection">' +
+      '<select id="f-sort" data-f="sort" aria-label="Sort products"><option value="featured"' + (F.sort === "featured" ? " selected" : "") + '>Sort: Featured</option><option value="new"' + (F.sort === "new" ? " selected" : "") + '>Newest first</option><option value="low"' + (F.sort === "low" ? " selected" : "") + '>Price, low to high</option><option value="high"' + (F.sort === "high" ? " selected" : "") + '>Price, high to low</option></select>' +
+      '<span class="count">' + list.length + ' product' + (list.length === 1 ? "" : "s") + '</span></div>';
+    var body = list.length ? grid(list) : '<div class="empty"><p>No products match these filters.</p><button class="btn btn-line" data-act="clear">Clear filters</button></div>';
+    return '<div class="wrap"><div class="crumbs"><a href="#/">Home</a> / ' + esc(b.crumb) + '</div>' +
+      '<div class="page-head"><h1>' + esc(b.title) + '</h1>' + (b.desc ? '<p>' + esc(b.desc) + '</p>' : "") + pills + '</div>' + toolbar +
+      '<div class="layout" style="margin-top:18px">' + filters + '<div>' + body + '</div></div></div>';
+  }
+
+  function vCollections() {
+    var cats = CATS.map(function (c) {
+      var first = P.filter(function (p) { return p.cat === c && !p.pre; })[0];
+      return '<a class="cat" href="#/collection/' + c + '">' + art(first) + '<span>' + c + '</span></a>';
+    }).join("");
+    return '<div class="wrap"><div class="page-head"><h1>Collections</h1><p>Browse by category.</p></div><div class="cats" style="margin-top:24px">' + cats + '</div></div>';
+  }
+
+  function vProduct(id) {
+    var p = byId(id);
+    if (!p) return vNotFound();
+    if (SEL.id !== p.id) { SEL = { id: p.id, size: "", view: 0 }; var only = Object.keys(p.sizes); if (only.length === 1 && p.sizes[only[0]] > 0) SEL.size = only[0]; }
+    var t = TONES[p.tone];
+    var views = ["Front", "Back", "Detail"];
+    var tf = SEL.view === 1 ? "transform:scaleX(-1)" : SEL.view === 2 ? "transform:scale(1.7) translateY(-4%)" : "";
+    var main = '<div class="main"><div class="tile" style="background:' + t[0] + '"><svg class="g" viewBox="0 0 200 240" style="color:' + t[1] + ';' + tf + '" role="img" aria-label="' + esc(p.name) + ', ' + views[SEL.view].toLowerCase() + ' view"><use href="#g-' + p.art + '"/></svg></div></div>';
+    var thumbs = '<div class="thumbs">' + views.map(function (v, i) {
+      var f = i === 1 ? "transform:scaleX(-1)" : i === 2 ? "transform:scale(1.7) translateY(-4%)" : "";
+      return '<button class="' + (SEL.view === i ? "on" : "") + '" data-act="view" data-v="' + i + '" aria-label="Show ' + v.toLowerCase() + ' view"><div class="tile" style="background:' + t[0] + '"><svg class="g" viewBox="0 0 200 240" style="color:' + t[1] + ';' + f + '" aria-hidden="true"><use href="#g-' + p.art + '"/></svg></div></button>';
+    }).join("") + '</div>';
+    var so = stockOf(p) === 0;
+    var sizes = '<div class="sizes" role="group" aria-label="Size">' + Object.keys(p.sizes).map(function (s) {
+      return '<button class="size' + (SEL.size === s ? " on" : "") + '" data-act="size" data-v="' + s + '"' + (p.sizes[s] === 0 ? " disabled" : "") + '>' + s + '</button>';
+    }).join("") + '</div>';
+    var stockMsg = so ? "Sold out" : SEL.size ? (p.sizes[SEL.size] <= 2 ? "Only " + p.sizes[SEL.size] + " left in size " + SEL.size : "In stock in size " + SEL.size) : "In stock. Select a size.";
+    var low = !so && SEL.size && p.sizes[SEL.size] <= 2;
+    var rel = P.filter(function (x) { return x.cat === p.cat && x.id !== p.id && !!x.pre === !!p.pre; });
+    if (rel.length < 4) rel = rel.concat(P.filter(function (x) { return x.id !== p.id && rel.indexOf(x) < 0 && !!x.pre === !!p.pre; }));
+    rel = rel.slice(0, 4);
+    var details = '<ul><li>Brand: ' + esc(p.brand) + '</li><li>Category: ' + p.cat + '</li>' + (p.pre ? '<li>Condition: ' + p.cond + '</li><li>Size: ' + sizeLabel(p) + '</li>' : '<li>Available sizes: ' + Object.keys(p.sizes).join(", ") + '</li>') + '</ul>';
+    return '<div class="wrap"><div class="crumbs" style="margin-top:22px"><a href="#/">Home</a> / <a href="#/' + (p.pre ? "preloved" : "collection/" + p.cat) + '">' + (p.pre ? "Pre-loved" : p.cat) + '</a> / ' + esc(p.name) + '</div>' +
+      '<div class="pdp"><div class="gallery">' + main + thumbs + '</div>' +
+      '<div class="info"><h1>' + esc(p.name) + '</h1><p class="brand">' + esc(p.brand) + (p.pre ? ", " + p.cond : "") + '</p>' +
+      '<p class="big">' + priceHTML(p) + '</p>' +
+      (so ? "" : '<div><strong>Size</strong>' + sizes + '</div>') +
+      '<p class="stock' + (low ? " low" : "") + '" id="stock">' + stockMsg + '</p>' +
+      (so ? '<button class="btn btn-block" disabled>Sold out</button>' : '<button class="btn btn-block" data-act="add" data-id="' + p.id + '">Add to cart</button>') +
+      '<p class="note err" id="size-msg" aria-live="polite"></p>' +
+      '<button class="btn btn-line btn-block" style="margin-top:10px" data-act="wish" data-id="' + p.id + '">' + (wish[p.id] ? "Saved to wishlist" : "Save to wishlist") + '</button>' +
+      '<div class="acc"><details open><summary>Description</summary><p>' + esc(p.desc) + '</p></details><details><summary>Details</summary>' + details + '</details><details><summary>Shipping and returns</summary><p>Cash on Delivery across Pakistan. Free shipping over Rs 8,000. ' + (p.pre ? "Pre-loved items are final sale." : "Exchange within 7 days of delivery.") + '</p></details></div></div></div>' +
+      '<section class="section"><div class="section-head"><h2>You may also like</h2></div>' + grid(rel) + '</section></div>';
+  }
+
+  function vCart() {
+    if (!cart.length) return '<div class="wrap"><div class="page-head"><h1>Your cart</h1></div><div class="empty"><p>Your cart is empty.</p><a class="btn" href="#/shop">Continue shopping</a></div></div>';
+    var T = totals();
+    var lines = cart.map(function (l, i) {
+      var p = byId(l.id);
+      return '<div class="line">' + art(p) + '<div><h3><a href="#/product/' + p.id + '" style="text-decoration:none">' + esc(p.name) + '</a></h3><p>Size ' + esc(l.size) + '</p><p>' + money(cur(p)) + '</p>' +
+        '<div class="row"><div class="qty"><button data-act="qty" data-i="' + i + '" data-d="-1" aria-label="Decrease quantity">&minus;</button><span>' + l.qty + '</span><button data-act="qty" data-i="' + i + '" data-d="1" aria-label="Increase quantity">+</button></div>' +
+        '<button class="link-btn" data-act="remove" data-i="' + i + '">Remove</button><strong style="margin-left:auto">' + money(cur(p) * l.qty) + '</strong></div></div></div>';
+    }).join("");
+    return '<div class="wrap"><div class="page-head"><h1>Your cart</h1></div><div class="cart-wrap"><div>' + lines + '</div>' + summaryHTML(T, true) + '</div></div>';
+  }
+
+  function summaryHTML(T, withCode) {
+    return '<aside class="summary"><h2>Order summary</h2>' +
+      '<div class="sum-row"><span>Subtotal</span><span>' + money(T.sub) + '</span></div>' +
+      (T.d ? '<div class="sum-row"><span>Discount (' + esc(disc.code) + ')</span><span>-' + money(T.d) + '</span></div>' : "") +
+      '<div class="sum-row"><span>Shipping</span><span>' + (T.ship ? money(T.ship) : "Free") + '</span></div>' +
+      '<div class="sum-row total"><span>Total</span><span>' + money(T.total) + '</span></div>' +
+      (withCode ? '<div class="code"><input id="code-in" placeholder="Discount code" aria-label="Discount code" value="' + esc(disc.code) + '"><button class="btn btn-line" data-act="code">Apply</button></div><p class="note' + (disc.rate ? " ok" : "") + '" id="code-note">' + (disc.rate ? "Code applied: 10% off." : "Try DEMO10.") + '</p>' +
+        '<a class="btn btn-block" style="margin-top:14px" href="#/checkout">Check out</a><p class="note">Pay with Cash on Delivery. Free shipping over Rs 8,000.</p>' : "") +
+      '</aside>';
+  }
+
+  function vCheckout() {
+    if (!cart.length) return vCart();
+    var T = totals();
+    return '<div class="wrap"><div class="page-head"><h1>Checkout</h1></div><div class="cart-wrap"><form class="form" id="co-form" novalidate>' +
+      '<div><label for="c-name">Full name</label><input id="c-name" autocomplete="name"></div>' +
+      '<div><label for="c-phone">Phone number</label><input id="c-phone" type="tel" autocomplete="tel" placeholder="03XX XXXXXXX"></div>' +
+      '<div><label for="c-email">Email (optional)</label><input id="c-email" type="email" autocomplete="email"></div>' +
+      '<div><label for="c-addr">Delivery address</label><textarea id="c-addr" rows="3" autocomplete="street-address"></textarea></div>' +
+      '<div><label for="c-city">City</label><input id="c-city" autocomplete="address-level2"></div>' +
+      '<div><strong>Payment</strong></div>' +
+      '<label class="radio"><input type="radio" name="pay" checked> <span><strong>Cash on Delivery</strong><br><span style="color:var(--muted)">Pay in cash when your order arrives.</span></span></label>' +
+      '<label class="radio off"><input type="radio" name="pay" disabled> <span><strong>Card or online payment</strong><br>Added after the core store is working.</span></label>' +
+      '<p class="note err" id="co-err" aria-live="polite"></p>' +
+      '<button class="btn" type="submit">Place demo order</button></form>' + summaryHTML(T, false) + '</div></div>';
+  }
+
+  function vDone() {
+    return '<div class="wrap"><div class="done"><h1>Thank you</h1><p>Your demo order <strong>#' + orderNo + '</strong> has been placed. In the real store, you would get a confirmation message and a tracking number once it ships.</p><p>This is a demo, so nothing was sent or charged.</p><a class="btn" href="#/">Back to home</a></div></div>';
+  }
+
+  function vWish() {
+    var list = P.filter(function (p) { return wish[p.id]; });
+    return '<div class="wrap"><div class="page-head"><h1>Wishlist</h1></div>' + (list.length ? '<div style="margin-top:24px">' + grid(list) + '</div>' : '<div class="empty"><p>No saved items yet. Tap the heart on any product.</p><a class="btn" href="#/shop">Browse products</a></div>') + '</div>';
+  }
+
+  function vAccount() {
+    return '<div class="wrap"><div class="page-head"><h1>Account</h1><p>Customers can sign in to see order history and saved details.</p></div>' +
+      '<form class="form" id="acc-form" style="max-width:420px;margin-top:24px"><div><label for="a-mail">Email</label><input id="a-mail" type="email"></div><div><label for="a-pass">Password</label><input id="a-pass" type="password"></div><button class="btn" type="submit">Sign in</button><p class="note" id="acc-note"></p></form></div>';
+  }
+
+  function vAbout() {
+    return '<div class="wrap"><div class="page-head"><h1>About us</h1></div><div class="prose"><p style="margin-top:20px">Noor &amp; Thread makes considered pieces for everyday wear, and gives good clothes a second life through our pre-loved section.</p>' +
+      '<h2>Our story</h2><p>Sample text. Replace with the brand story provided by the client.</p><h2>Pre-loved</h2><p>Every pre-loved piece is checked, cleaned and listed with its size and condition.</p></div></div>';
+  }
+  function vContact() {
+    return '<div class="wrap"><div class="page-head"><h1>Contact</h1><p>Questions about an order or a product? Send us a message.</p></div>' +
+      '<form class="form" id="contact-form" style="max-width:520px;margin-top:24px"><div><label for="k-name">Name</label><input id="k-name"></div><div><label for="k-mail">Email</label><input id="k-mail" type="email"></div><div><label for="k-msg">Message</label><textarea id="k-msg" rows="4"></textarea></div><button class="btn" type="submit">Send message</button><p class="note" id="k-note"></p></form>' +
+      '<div class="prose"><h2>Other ways to reach us</h2><p>Email: hello@yourbrand.com<br>WhatsApp: +92 300 0000000<br>Sample details. Replace with the client\'s contact information.</p></div></div>';
+  }
+  function vFaq() {
+    var q = [["How long does delivery take?", "Sample answer: 3-5 working days across Pakistan."], ["Can I pay on delivery?", "Yes. Cash on Delivery is available on all orders."], ["Can I exchange an item?", "Yes, new items can be exchanged within 7 days of delivery. Pre-loved items are final sale."], ["How do I know a pre-loved item is in good condition?", "Each listing shows its size and condition, and every piece is checked and cleaned before it is listed."]];
+    return '<div class="wrap"><div class="page-head"><h1>FAQ</h1></div><div class="prose faq">' + q.map(function (x) { return '<details><summary>' + x[0] + '</summary><p>' + x[1] + '</p></details>'; }).join("") + '</div></div>';
+  }
+  function vPolicies() {
+    return '<div class="wrap"><div class="page-head"><h1>Shipping, returns and policies</h1><p>Sample policy text. Replace with the client\'s own policies.</p></div><div class="prose">' +
+      '<h2>Shipping</h2><p>We ship across Pakistan. Shipping is Rs 250, and free on orders over Rs 8,000. Orders are delivered in 3-5 working days.</p>' +
+      '<h2>Returns and exchanges</h2><p>New items can be exchanged within 7 days of delivery if unworn with tags attached. Pre-loved items are final sale.</p>' +
+      '<h2>Privacy</h2><p>We only use your details to process and deliver your order.</p>' +
+      '<h2>Terms</h2><p>By placing an order you agree to these terms.</p></div></div>';
+  }
+  function vNotFound() { return '<div class="wrap"><div class="empty"><p>We could not find that page.</p><a class="btn" href="#/">Back to home</a></div></div>'; }
+
+  /* ---------- router ---------- */
+  function route(keep) {
+    var h = location.hash.replace(/^#\/?/, "");
+    var parts = h.split("/"), r = parts[0] || "home", a = decodeURIComponent(parts.slice(1).join("/"));
+    var key = r + "/" + a;
+    if (key !== lastKey) { F = fresh(); if (r === "preloved" && a) F.size = a; if (r === "search") F.q = ""; lastKey = key; }
+    var html;
+    switch (r) {
+      case "home": html = vHome(); break;
+      case "shop": html = vCollection("shop"); break;
+      case "new": html = vCollection("new"); break;
+      case "preloved": html = vCollection("preloved"); break;
+      case "collection": html = vCollection("collection", a); break;
+      case "search": html = vCollection("search", a); break;
+      case "collections": html = vCollections(); break;
+      case "product": html = vProduct(a); break;
+      case "cart": html = vCart(); break;
+      case "checkout": html = vCheckout(); break;
+      case "done": html = vDone(); break;
+      case "wishlist": html = vWish(); break;
+      case "account": html = vAccount(); break;
+      case "about": html = vAbout(); break;
+      case "contact": html = vContact(); break;
+      case "faq": html = vFaq(); break;
+      case "policies": html = vPolicies(); break;
+      default: html = vNotFound();
+    }
+    var y = window.pageYOffset;
+    app.innerHTML = html;
+    if (keep) window.scrollTo(0, y); else window.scrollTo(0, 0);
+    document.getElementById("mobile-nav").classList.remove("open");
+    badges();
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-act]");
+    if (!t) return;
+    var act = t.getAttribute("data-act");
+    if (act === "noop") { e.preventDefault(); toast("Social links are added in the real store."); return; }
+    if (act === "menu") { document.getElementById("mobile-nav").classList.toggle("open"); return; }
+    if (act === "search") { var sb = document.getElementById("searchbar"); sb.classList.toggle("open"); if (sb.classList.contains("open")) document.getElementById("search-input").focus(); return; }
+    if (act === "wish") {
+      var id = +t.getAttribute("data-id");
+      if (wish[id]) delete wish[id]; else wish[id] = true;
+      badges();
+      if (/^#\/product\//.test(location.hash) || /^#\/wishlist/.test(location.hash)) route(true);
+      else t.classList.toggle("on", !!wish[id]);
+      return;
+    }
+    if (act === "size") { SEL.size = t.getAttribute("data-v"); route(true); return; }
+    if (act === "view") { SEL.view = +t.getAttribute("data-v"); route(true); return; }
+    if (act === "add") {
+      var p = byId(t.getAttribute("data-id"));
+      if (!SEL.size) { var m = document.getElementById("size-msg"); if (m) m.textContent = "Please select a size."; return; }
+      var line = null; cart.forEach(function (l) { if (l.id === p.id && l.size === SEL.size) line = l; });
+      var have = line ? line.qty : 0;
+      if (have >= p.sizes[SEL.size]) { toast("That is all we have in size " + SEL.size + "."); return; }
+      if (line) line.qty++; else cart.push({ id: p.id, size: SEL.size, qty: 1 });
+      badges(); toast(p.name + " added to cart.", true); return;
+    }
+    if (act === "qty") {
+      var i = +t.getAttribute("data-i"), d = +t.getAttribute("data-d"), l = cart[i], pp = byId(l.id);
+      if (d > 0 && l.qty >= pp.sizes[l.size]) { toast("Only " + pp.sizes[l.size] + " available in size " + l.size + "."); return; }
+      l.qty += d; if (l.qty < 1) cart.splice(i, 1);
+      route(true); return;
+    }
+    if (act === "remove") { cart.splice(+t.getAttribute("data-i"), 1); route(true); return; }
+    if (act === "code") {
+      var v = document.getElementById("code-in").value.trim().toUpperCase();
+      if (v === "DEMO10") { disc = { code: v, rate: 0.1 }; }
+      else { disc = { code: "", rate: 0 }; route(true); var n = document.getElementById("code-note"); if (n) { n.textContent = v ? "That code is not valid." : "Enter a code."; n.className = "note err"; } return; }
+      route(true); return;
+    }
+    if (act === "clear") { F = fresh(); if (/^#\/preloved\/./.test(location.hash)) { location.hash = "#/preloved"; return; } route(true); return; }
+  });
+
+  document.addEventListener("input", function (e) {
+    if (e.target.id === "f-max") document.getElementById("f-max-out").textContent = money(+e.target.value);
+  });
+  document.addEventListener("change", function (e) {
+    var k = e.target.getAttribute && e.target.getAttribute("data-f");
+    if (!k) return;
+    if (k === "stock") F.stock = e.target.checked;
+    else if (k === "max") F.max = +e.target.value;
+    else F[k] = e.target.value;
+    route(true);
+  });
+  document.addEventListener("toggle", function (e) { if (e.target.id === "filters") FOPEN = e.target.open; }, true);
+
+  document.addEventListener("submit", function (e) {
+    var f = e.target;
+    e.preventDefault();
+    if (f.id === "search-form") {
+      var q = document.getElementById("search-input").value.trim();
+      if (q) { location.hash = "#/search/" + encodeURIComponent(q); document.getElementById("searchbar").classList.remove("open"); }
+    } else if (f.id === "news-form") {
+      var n = document.getElementById("news-note"); n.textContent = "Thanks for subscribing (demo only, nothing was saved)."; n.className = "note ok";
+    } else if (f.id === "contact-form") {
+      var c = document.getElementById("k-note"); c.textContent = "Thanks, your message was received (demo only, nothing was sent)."; c.className = "note ok";
+    } else if (f.id === "acc-form") {
+      var a = document.getElementById("acc-note"); a.textContent = "Demo only. Real accounts, order history and saved details come with Shopify."; a.className = "note";
+    } else if (f.id === "co-form") {
+      var need = [["c-name", "your name"], ["c-phone", "your phone number"], ["c-addr", "your delivery address"], ["c-city", "your city"]];
+      for (var i = 0; i < need.length; i++) {
+        if (!document.getElementById(need[i][0]).value.trim()) { var er = document.getElementById("co-err"); er.textContent = "Please enter " + need[i][1] + "."; document.getElementById(need[i][0]).focus(); return; }
+      }
+      orderNo++; cart = []; disc = { code: "", rate: 0 }; badges(); location.hash = "#/done";
+    }
+  });
+
+  window.addEventListener("hashchange", function () { route(false); });
+  route(false);
+})();
+</script>
+</body>
+</html>
